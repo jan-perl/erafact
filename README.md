@@ -1,12 +1,8 @@
-# nedstorage
-Visualisatie van data van ned.nl
-gericht op sizing storage
-
+# erafact
+Summarizing ERA fact sheets
 jupyter notebook.
 
-Laad API key in bestand ../data/ned-api.key
-
-intermediates voor opslag gegevens
+put source data into data
 
 output in folder output
 

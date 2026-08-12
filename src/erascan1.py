@@ -89,6 +89,8 @@ p61_perf=pd.pivot(s61_perf[s61_perf_yrus==s61_perf['time']],index='geo',values='
 
 p61_perf
 
+
+
 # +
 #market
 # -
@@ -134,21 +136,22 @@ trdens['ptsum'] = trdens['Freight transport tkm'] + trdens['Passenger transport 
 trdens['pctfr'] = trdens['Freight transport tkm'] /  trdens['ptsum']
 trdens['dens'] = trdens['ptsum']  / trdens['Line kilometres']
 
-# +
 fig, axi = plt.subplots(figsize=(8, 8))
-
-ax=trdens.sort_values('pctfr').plot.barh(ax=axi,x='geo', y='pctfr',
-             title='Fraction of freight traffic of all traffic per country', color='green',legend=False)
+trdens['domp']='lightblue'
+trdens['domp'] =trdens['domp'].where(
+   trdens['pctfr'] >0.5 ,'green'  )
+trdensff=trdens.sort_values('pctfr')
+ax=trdensff.plot.barh(ax=axi,x='geo', y='pctfr',
+             title='Fraction of freight traffic of all traffic per country', color=trdensff['domp'],legend=False)
 ax.set_ylabel('Country')
 ax.set_xlabel('freight tkm/ (freight tkm + passenger pkm)')
 figname = "../output/fracfreight.svg"
 plt.savefig(figname,dpi=300)
 
-# +
 fig, axi = plt.subplots(figsize=(8, 8))
-
-ax=trdens.sort_values('dens').plot.barh(ax=axi,x='geo', y='dens',
-             title='Density of traffic per country', color='green',legend=False)
+trdensds=trdens.sort_values('dens')
+ax=trdensds.plot.barh(ax=axi,x='geo', y='dens',
+             title='Density of traffic per country', color=trdensds['domp'],legend=False)
 ax.set_ylabel('Country')
 ax.set_xlabel('million (freight tkm + passenger pkm) / line km')
 figname = "../output/usgdens.svg"
@@ -183,5 +186,9 @@ ax.set_ylabel('Country')
 ax.set_xlabel('fraction of network use')
 figname = "../output/nrglargop.svg"
 plt.savefig(figname,dpi=300)
+
+# +
+#performance join
+# -
 
 
