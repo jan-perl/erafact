@@ -70,16 +70,16 @@ trdens['dens'] = trdens['Network usage intensity for total services']
 
 fig, axi = plt.subplots(figsize=(8, 8))
 trdens['domp']='lightblue'
-trdens['domp'] =trdens['domp'].where(   trdens['pctfr'] >0.2 ,'green'  )
+frlim=.30
+trdens['domp'] =trdens['domp'].where(   trdens['pctfr'] >frlim ,'green'  )
 trdensff=trdens.sort_values('pctfr')
 ax=trdensff.plot.barh(ax=axi,x='geo', y='pctfr',
              title='Fraction of freight traffic of all traffic per country', color=trdensff['domp'],legend=False)
 ax.set_ylabel('Country')
 ax.set_xlabel('freight tkm/ (freight tkm + passenger pkm)')
-frlim=.2
 ax.annotate("",xytext=(frlim,0),xy=(frlim, 30), 
                     arrowprops=dict(arrowstyle="-"))
-ax.annotate("20 % freight",xytext=(frlim+.01,0),xy=(frlim+.01, 0))
+ax.annotate("%.0f %% freight"%(frlim*100),xytext=(frlim+.01,0),xy=(frlim+.01, 0))
 figname = "../output/fracfreight.svg"
 plt.savefig(figname,dpi=300)
 
@@ -120,14 +120,14 @@ fig, axi = plt.subplots(figsize=(8, 8))
 #nrgshare['elargany'].fillna(0,inplace=True)
 nrgshare= nrgshare.sort_values('elargany')
 ax=nrgshare.plot.barh(ax=axi,x='geo', y='elargany',
-             title='Estimated Energy usage of largest operator \n(largest = light blue : freight, green : passenger)', 
+             title='Train kms of largest operator', 
                       color=nrgshare['elargwh'],legend=False)
 ax.set_ylabel('Country')
-ax.set_xlabel('fraction of network use')
-pbnorm=.5
+ax.set_xlabel('fraction of all train kms on network')
+pbnorm=.55
 ax.annotate("",xytext=(pbnorm,0),xy=(pbnorm, 30), 
                     arrowprops=dict(arrowstyle="-"))
-ax.annotate("50 % estimated energy share",xytext=(pbnorm+.01,0),xy=(pbnorm+.01, 0))
+ax.annotate("%.0f %% of all train kms"%(pbnorm*100),xytext=(pbnorm+.01,0),xy=(pbnorm+.01, 0))
 figname = "../output/nrglargop.svg"
 plt.savefig(figname,dpi=300)
 
@@ -173,3 +173,7 @@ sns.scatterplot(data=perfwprio,x='dens',y='Passenger - punctuality',hue='First p
 sns.scatterplot(data=perfwprio,x='dens',y='Passenger - punctuality',hue='threshold for passenger trains arriving on time')
 
 sns.scatterplot(data=perfwprio,x='Freight - punctuality',y='Passenger - punctuality',hue='First prio')
+
+
+
+
