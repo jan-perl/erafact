@@ -138,22 +138,31 @@ trdens['dens'] = trdens['ptsum']  / trdens['Line kilometres']
 
 fig, axi = plt.subplots(figsize=(8, 8))
 trdens['domp']='lightblue'
-trdens['domp'] =trdens['domp'].where(
-   trdens['pctfr'] >0.5 ,'green'  )
+trdens['domp'] =trdens['domp'].where(   trdens['pctfr'] >0.4 ,'green'  )
 trdensff=trdens.sort_values('pctfr')
 ax=trdensff.plot.barh(ax=axi,x='geo', y='pctfr',
              title='Fraction of freight traffic of all traffic per country', color=trdensff['domp'],legend=False)
 ax.set_ylabel('Country')
 ax.set_xlabel('freight tkm/ (freight tkm + passenger pkm)')
+frlim=.4
+ax.annotate("",xytext=(frlim,0),xy=(frlim, 25), 
+                    arrowprops=dict(arrowstyle="-"))
+ax.annotate("40 % freight",xytext=(frlim+.01,0),xy=(frlim+.01, 0))
 figname = "../output/fracfreight.svg"
 plt.savefig(figname,dpi=300)
 
+# +
 fig, axi = plt.subplots(figsize=(8, 8))
 trdensds=trdens.sort_values('dens')
 ax=trdensds.plot.barh(ax=axi,x='geo', y='dens',
              title='Density of traffic per country', color=trdensds['domp'],legend=False)
 ax.set_ylabel('Country')
 ax.set_xlabel('million (freight tkm + passenger pkm) / line km')
+denslim=2
+ax.annotate("",xytext=(denslim,0),xy=(denslim, 25), 
+                    arrowprops=dict(arrowstyle="<-"))
+ax.annotate("density < 2",xytext=(denslim+.01,0),xy=(denslim+.01, 0))
+
 figname = "../output/usgdens.svg"
 plt.savefig(figname,dpi=300)
 
@@ -180,15 +189,49 @@ fig, axi = plt.subplots(figsize=(8, 8))
 #nrgshare['elargany'].fillna(0,inplace=True)
 nrgshare= nrgshare.sort_values('elargany')
 ax=nrgshare.plot.barh(ax=axi,x='geo', y='elargany',
-             title='Energy usage of largest operator \n(light blue : freight, green : passenger)', 
+             title='Estimated Energy usage of largest operator \n(largest = light blue : freight, green : passenger)', 
                       color=nrgshare['elargwh'],legend=False)
 ax.set_ylabel('Country')
 ax.set_xlabel('fraction of network use')
+pbnorm=.5
+ax.annotate("",xytext=(pbnorm,0),xy=(pbnorm, 25), 
+                    arrowprops=dict(arrowstyle="-"))
+ax.annotate("50 % estimated energy share",xytext=(pbnorm+.01,0),xy=(pbnorm+.01, 0))
 figname = "../output/nrglargop.svg"
 plt.savefig(figname,dpi=300)
 
 # +
 #performance join
 # -
+
+perfcmbi=nrgshare.merge(p61_perf,how='outer')
+perfcmbi
+
+fig, axi = plt.subplots(figsize=(8, 8))
+#nrgshare['elargany'].fillna(0,inplace=True)
+perfcmbi['domp']='lightblue'
+perfcmbi['domp'] =perfcmbi['domp'].where(  perfcmbi['pctfr'] >0.5 ,'green'  )
+perfcmbi= perfcmbi.sort_values('Passenger - punctuality')
+ax=perfcmbi.plot.barh(ax=axi,x='geo', y='Passenger - punctuality',
+             title='Passenger punctuality \n( network type: light blue : freight, green : passenger)', 
+                      color=perfcmbi['domp'],legend=False)
+ax.set_ylabel('Country')
+ax.set_xlabel('Passenger punctuality')
+ax.set_xlim(left=60)
+figname = "../output/passpunct.svg"
+plt.savefig(figname,dpi=300)
+
+#now read operational rules
+RNE_prioin=pd.read_excel("../data/trafrctry_table_with_headings_v15.xls")
+RNE_prioin
+
+RNE_prio = RNE_prioin[RNE_prioin['geo'].isna()==False]
+
+perfwprio=perfcmbi.merge(RNE_prio,how='outer')
+perfwprio
+
+perfwprio[['geo','COUNTRY']]
+
+sns.scatterplot(data=perfwprio,x='dens',y='Passenger - punctuality',hue='domp')
 
 
