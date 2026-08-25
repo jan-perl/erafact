@@ -114,7 +114,7 @@ nrgshare['elargwh'] = nrgshare['elargwh'].where(
    nrgshare['elargfr'] > nrgshare['elargpass'] ,'green'  )
 
 nrgshare.to_excel('../output/plotnrs.xlsx')
-nrgshare
+#nrgshare
 
 fig, axi = plt.subplots(figsize=(8, 8))
 #nrgshare['elargany'].fillna(0,inplace=True)

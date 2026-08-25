@@ -25,21 +25,36 @@ import io as io
 from datetime import datetime
 
 some_string="""line,ssiz,sposx,sposy,label
-a,30,0,0,a
+a,30,0,0,e
 a,10,1,1
 a,10,3,3
 a,10,6,5
-a,30,8,8,b
+a,30,8,8,a
 b,30,0,0,
 b,10,-2,1
 b,10,-3,5
 b,10,-5,5
-b,30,-8,8,c
+b,30,-8,8,b
 c,30,0,0
 c,10,1,-1
 c,10,1.5,-4
 c,10,2,-6
-c,30,3,-8,d"""
+c,30,3,-8,c
+a1,30,8,8
+a1,10,6,11
+a2,30,8,8
+a2,10,11,9
+b1,30,-8,8
+b1,10,-9,11
+b2,30,-8,8
+b2,10,-11,9
+c1,30,3,-8
+c1,10,2,-14
+c2,30,3,-8
+c2,10,6,-10
+hs,30,3,-8
+hs,30,8,8
+"""
     #read CSV string into pandas DataFrame    
 netw_pts= pd.read_csv(io.StringIO(some_string), sep=",")
 netw_pts['label'].fillna("",inplace=True)
