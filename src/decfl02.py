@@ -63,15 +63,15 @@ import schemdraw.elements as elm
 #schemdraw.svgconfig.svg2 = False
 
 # +
-txtqprio ="Prio train type or\nno conflict ?"
-txtqebenf='Benefits from\nenergy saving ?'
+txtqprio ="4.5 b\n Prio train type or\nno conflict ?"
+txtqebenf='4.2 (with flow), 6.2\nBenefits from\nenergy saving ?'
 
 def addpartnott(d,d1,d2m,fast,ttpo,bslo,coastin,sep): 
     d += flow.Arrow().right(d.unit*0.5).at(d1.E)
     nttd = flow.Box(w=5, h=2).anchor('W').label('Many countries:\n freight \nshunting').drop('E')
     d += nttd
     d += flow.Arrow().right(d.unit*0.5)
-    dgt = flow.Decision(w=5, h=3.9, S='YES', E='NO').anchor('W').label('Can Guess\na Timetable ?').drop('E')
+    dgt = flow.Decision(w=5, h=3.9, S='YES', E='NO').anchor('W').label('4.1.1\nCan Guess\na Timetable ?').drop('E')
     d += dgt
     d += flow.Arrow().right(d.unit*1.5)
 #    d += flow.Arrow().tox(fast.E)
@@ -83,7 +83,7 @@ def addpartnott(d,d1,d2m,fast,ttpo,bslo,coastin,sep):
     d2 = flow.Decision(w=5, h=3.9, S='YES', W='NO').anchor('N').label(txtqebenf).drop('S')
     d += d2
     d += flow.Arrow().toy(bslo.N)
-    bot = flow.Box(w=3, h=2).label('run slowly\naim  40 km/h\nend speed')
+    bot = flow.Box(w=3, h=2).label('5.3.1\nrun slowly\naim  40 km/h\nend speed')
     d += bot
     d += flow.Arrow().toy(sep.N)
 #    d += flow.Arrow().to(coastal.N)
@@ -113,14 +113,14 @@ def addpartnosav(d,d1,sep):
     d += d3
 
     d += flow.Arrow().down(d.unit*1.5).at(d3.S)
-    d += flow.Box(w=3, h=2).anchor('N').label('await connections\nrun quickly').drop('S')
+    d += flow.Box(w=3, h=2).anchor('N').label('5.2.1\nawait connections\nrun quickly').drop('S')
     d += flow.Arrow().toy(sep.N)
     d += flow.Start().label('Wait and\nMake up')
 
 #    d += flow.Arrow().at(d3.E).to(fast.W)
 
     d += flow.Arrow().at(d3.E).right(d.unit*0.5)
-    fast = flow.Box(w=3, h=2).anchor('W').label('get ahead\nof others').drop('S')
+    fast = flow.Box(w=3, h=2).anchor('W').label('5.2.2\nget ahead\nof others').drop('S')
     d += fast
     d += flow.Arrow().toy(sep.N)
     d += flow.Start().label('Full\nspeed')
@@ -138,10 +138,10 @@ def addpart1(d):
     b = flow.Start().label('START')
     d += b 
     d += flow.Arrow().down(d.unit/2)
-    d1 = flow.Decision(w=5, h=3.9, S='YES', E='NO').label('Minute-level\ntimetable ?')
+    d1 = flow.Decision(w=5, h=3.9, S='YES', E='NO').label('4.1, 6.1\nMinute-level\ntimetable ?')
     d += d1
     d += flow.Arrow().length(d.unit/2)
-    d3 = flow.Decision(w=5, h=3.9, W='OTP', S='TTP').label('Dispatching\nStrategy')
+    d3 = flow.Decision(w=5, h=3.9, W='OTP', S='TTP').label('4.5 a\nDispatching\nStrategy')
     d += d3
     d += flow.Arrow().length(d.unit/2)
     d2 = flow.Decision(w=5, h=3.9, S='YES', E='NO').label(txtqebenf)
@@ -150,7 +150,7 @@ def addpart1(d):
     dpr = flow.Decision(w=5, h=3.9, E='YES', S='NO').label(txtqprio )
     d += dpr
     d += flow.Arrow().length(d.unit/2)
-    bot = flow.Box(w=3, h=2).label('run on time-ish\naim + 1 min')
+    bot = flow.Box(w=3, h=2).label('5.1.3\nrun on time-ish\naim + 1 min')
     d += bot
     d += flow.Arrow().down(d.unit/2)
     
@@ -158,7 +158,7 @@ def addpart1(d):
     d += sep
     
     d += flow.Arrow().left(d.unit/2).at(d3.W)
-    bot = flow.Box(w=3, h=2).label('be on-time\n< +/-30 secs.').drop('S')
+    bot = flow.Box(w=3, h=2).label('5.1.1\nbe on-time\n< +/-30 secs.').drop('S')
     d += bot
     d += flow.Arrow().toy(sep.N)
     d+= flow.Start().label('ECO\ndrive')
@@ -168,7 +168,7 @@ def addpart1(d):
     d += flow.Arrow().right(d.unit*0.5).at(dpr.E)
 #    d += flow.Line().at(dpr.E).tox(fast.E)
 #    d += flow.Arrow().right(d.unit/2)
-    bslo = flow.Box(w=3, h=2).label('aim half\npunct. min').drop('S')
+    bslo = flow.Box(w=3, h=2).label('5.1.2\naim half\npunct. min').drop('S')
     d += bslo
     d += flow.Arrow().toy(sep.N)
 #    d += flow.Arrow().to(coastal.N)

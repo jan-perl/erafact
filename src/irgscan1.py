@@ -204,11 +204,14 @@ fig, axi = plt.subplots(figsize=(8, 8))
 perfwprioc= perfwprio.copy()
 perfwprioc['Passenger - punctuality'].fillna(50,inplace=True)
 perfwprioc['First prio'].fillna('Unknown',inplace=True)
-sns.scatterplot(ax=axi,data=perfwprioc,x='dens',y='Passenger - punctuality',hue='First prio',style='First prio')
+perfwprioc['First prio'].where(perfwprioc['First prio'] !='Other',"Bespoke",inplace=True)
+perfwprioc= perfwprioc.sort_values('First prio',ascending=[1])
+sns.scatterplot(ax=axi,data=perfwprioc,x='dens',y='Passenger - punctuality',hue='First prio',
+                style='First prio',s=120,alpha=.6)
 ax=axi
 ax.set_ylabel('Passenger punctuality (%)')
 ax.set_xlabel('train km per day / line km')
-ax.set_title('Passenger punctuality vesrus density and traffic rules')
+ax.set_title('Passenger punctuality versus density and dispatching rules')
 nalim=55
 ax.annotate("",xytext=(10,nalim),xy=(130,nalim),   arrowprops=dict(arrowstyle="-"),color='grey')
 ax.annotate("below this line: punctuality not in IRG report",xytext=(50,nalim-2),xy=(50,nalim-2))
