@@ -47,13 +47,15 @@ import matplotlib
 #illustrative punctuality limit
 plimill = 180
 depx0 = 0
-arrx0 = 5*plimill
+arrx0 = 3*plimill
 disty=0.05
+maxyfigval=0
 
 
 # +
 #draw distribution 
 def drawdis(ax,dis0, wi, zeroxind,zeroyind, pind,dirind):
+    global maxyfigval
     hwhmfact =  np.sqrt(2*np.log(2)) 
     mu, sigma = dis0, wi/hwhmfact
     if (dirind==0):
@@ -67,18 +69,23 @@ def drawdis(ax,dis0, wi, zeroxind,zeroyind, pind,dirind):
     elif (dirind==-1):
         y=y*2*(x<mu)
         y0*=2
-    ax.plot(x+zeroxind, y+zeroyind,color="blue")
-    y1=np.array([0+zeroyind,y0+zeroyind])
+    ax.plot(x+zeroxind, y+zeroyind,color="blue")    
+    maxyfigval=max(y0,maxyfigval)
+    y1=np.array([0+zeroyind,maxyfigval+zeroyind])
     x1=np.array([zeroxind,zeroxind])
     ax.plot(x1, y1,color="orange")
     x1=np.array([zeroxind+pind,zeroxind+pind])
     ax.plot(x1, y1,color="orange")
+    ap=dict(arrowstyle="<->",shrinkA=0,shrinkB=0)
     if (dirind==1):
-        ax.annotate("%.0f @ %0.f"%(wi,dis0), xytext=(zeroxind+dis0+wi,y0/2+zeroyind),xy=(zeroxind+dis0, y0/2+zeroyind), arrowprops=dict(arrowstyle="<->"))
+        ax.annotate(" %.0f @ %0.f"%(wi,dis0), xytext=(zeroxind+dis0+wi,y0/2+zeroyind),xy=(zeroxind+dis0, y0/2+zeroyind), 
+                    arrowprops=ap,va="center")
     elif (dirind==-1):
-        ax.annotate("%.0f @ %0.f"%(wi,dis0), xytext=(zeroxind+dis0,y0/2+zeroyind),xy=(zeroxind+dis0-wi, y0/2+zeroyind), arrowprops=dict(arrowstyle="<->"))
+        ax.annotate(" %.0f @ %0.f"%(wi,dis0), xytext=(zeroxind+dis0,y0/2+zeroyind),xy=(zeroxind+dis0-wi, y0/2+zeroyind), 
+                    arrowprops=ap,va="center")
     else:
-        ax.annotate("%.0f @ %0.f"%(wi,dis0), xytext=(zeroxind+dis0+wi/2,y0/2+zeroyind),xy=(zeroxind+dis0-wi/2, y0/2+zeroyind), arrowprops=dict(arrowstyle="<->"))
+        ax.annotate(" %.0f @ %0.f"%(wi,dis0), xytext=(zeroxind+dis0+wi/2,y0/2+zeroyind),xy=(zeroxind+dis0-wi/2, y0/2+zeroyind), 
+                    arrowprops=ap,va="center")
 
 fig, axi = plt.subplots(figsize=(8, 8))    
 drawdis(axi,plimill/2,plimill/2,arrx0,0.05,plimill,0)
@@ -89,16 +96,17 @@ fig.show()
 def addochoi(ax,nr,label, vpos, dep0, depwi,depind,arr0, arrwi,arrind,showlim=1):
     drawdis(axi,dep0,depwi,arrx0*0,-disty*vpos,0,depind)
     drawdis(axi,arr0,arrwi,arrx0*1,-disty*vpos,plimill*showlim,arrind)
-    axi.annotate(nr+"\n", xy=(-arrx0*0.9,-disty*vpos) )
-    axi.annotate(label+"\n", xy=(-arrx0*0.7,-disty*vpos) )
+    axi.annotate(nr+"\n", xy=(-arrx0*0.45,-disty*vpos) )
+    axi.annotate(label+"\n", xy=(-arrx0*0.35,-disty*vpos) )
     rtsup= arr0-dep0 - (depwi * depind /2) + (arrwi * arrind /2)       
     axi.annotate("Mean runtime\nPlanT %+.0f s\nMinT %+.0f s\n"%(rtsup,rtsup+90), xy=(arrx0*0.45,-disty*vpos) )
     
-fig, axi = plt.subplots(figsize=(8, 8))
+fig, axi = plt.subplots(figsize=(12, 8))
 axi.annotate("departing", xy=(0,-disty*0.15) )
 axi.annotate("arriving", xy=(arrx0,-disty*0.15) )
 axi.set_ylim(top=0,bottom=-7*disty)
-axi.set_xlim(left=-arrx0,right=arrx0+2*plimill)
+axi.set_xlim(left=-arrx0/2,right=arrx0+2*plimill)
+maxyfigval=0
 addochoi(axi,"5.1.1","be on-time",1,0,30,1,0,30,0 )    
 addochoi(axi,"5.1.2","aim punctual",2,0,30,1,plimill/2,plimill/3,0 ) 
 addochoi(axi,"5.1.3","on-timish",3,0,30,1,plimill/6,plimill/3,0 )
