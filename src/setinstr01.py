@@ -54,7 +54,7 @@ maxyfigval=0
 
 # +
 #draw distribution 
-def drawdis(ax,dis0, wi, zeroxind,zeroyind, pind,dirind):
+def drawdis(ax,dis0, wi, zeroxind,zeroyind, pind,dirind,prstat=False):
     global maxyfigval
     hwhmfact =  np.sqrt(2*np.log(2)) 
     mu, sigma = dis0, wi/hwhmfact
@@ -69,6 +69,8 @@ def drawdis(ax,dis0, wi, zeroxind,zeroyind, pind,dirind):
     elif (dirind==-1):
         y=y*2*(x<mu)
         y0*=2
+    if (prstat):
+        print ("area %g mean %g"%(y.sum()*(x[1]-x[0]) ,(x*y).sum() /y.sum() ))
     ax.plot(x+zeroxind, y+zeroyind,color="blue")    
     maxyfigval=max(y0,maxyfigval)
     y1=np.array([0+zeroyind,maxyfigval+zeroyind])
@@ -88,18 +90,18 @@ def drawdis(ax,dis0, wi, zeroxind,zeroyind, pind,dirind):
                     arrowprops=ap,va="center")
 
 fig, axi = plt.subplots(figsize=(8, 8))    
-drawdis(axi,plimill/2,plimill/2,arrx0,0.05,plimill,0)
+drawdis(axi,plimill/2,plimill/2,arrx0,0.05,plimill,1,prstat=True)
 fig.show()
 
-
 # +
+rtmarg=60
 def addochoi(ax,nr,label, vpos, dep0, depwi,depind,arr0, arrwi,arrind,showlim=1):
     drawdis(axi,dep0,depwi,arrx0*0,-disty*vpos,0,depind)
     drawdis(axi,arr0,arrwi,arrx0*1,-disty*vpos,plimill*showlim,arrind)
     axi.annotate(nr+"\n", xy=(-arrx0*0.45,-disty*vpos) )
     axi.annotate(label+"\n", xy=(-arrx0*0.35,-disty*vpos) )
-    rtsup= arr0-dep0 - (depwi * depind /2) + (arrwi * arrind /2)       
-    axi.annotate("Mean runtime\nPlanT %+.0f s\nMinT %+.0f s\n"%(rtsup,rtsup+90), xy=(arrx0*0.45,-disty*vpos) )
+    rtsup= arr0-dep0 - (2*depwi * depind /3) + (2*arrwi * arrind /3)       
+    axi.annotate("Mean runtime\nPlanT %+.0f s\nMinT %+.0f s\n"%(rtsup,rtsup+rtmarg), xy=(arrx0*0.45,-disty*vpos) )
     
 fig, axi = plt.subplots(figsize=(12, 8))
 axi.annotate("departing", xy=(0,-disty*0.15) )
@@ -110,8 +112,8 @@ maxyfigval=0
 addochoi(axi,"5.1.1","be on-time",1,0,30,1,0,30,0 )    
 addochoi(axi,"5.1.2","aim punctual",2,0,30,1,plimill/2,plimill/3,0 ) 
 addochoi(axi,"5.1.3","on-timish",3,0,30,1,plimill/6,plimill/3,0 )
-addochoi(axi,"5.2.1","wait connect",4,plimill/2,plimill/3,0,0,plimill/2,0 )
-addochoi(axi,"5.2.2","try get ahead",5,0,30,1,-plimill/2+15,plimill/2,1 )
+addochoi(axi,"5.2.1","wait connect",4,rtmarg,rtmarg/1.5,0,0,plimill/2,0 )
+addochoi(axi,"5.2.2","try get ahead",5,0,30,1,-rtmarg,plimill/6,1 )
 addochoi(axi,"5.3.1","coastalot",6,0,30,1,plimill,plimill,0 ,showlim=0)
 
 ylpos=-disty*6.5
