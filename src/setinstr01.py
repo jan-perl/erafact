@@ -123,7 +123,7 @@ axi.annotate("p.limit\nill=%0.f"%(plimill), xy=(arrx0+plimill,ylpos) )
 axi.set_axis_off()
 fig.show()
 figname = "../output/opchill.svg"
-fig.savefig(figname,dpi=600)
+fig.savefig(figname, bbox_inches='tight',dpi=600)
 # -
 
 
