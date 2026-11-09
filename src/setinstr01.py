@@ -103,27 +103,43 @@ def addochoi(ax,nr,label, vpos, dep0, depwi,depind,arr0, arrwi,arrind,showlim=1)
     rtsup= arr0-dep0 - (2*depwi * depind /3) + (2*arrwi * arrind /3)       
     axi.annotate("Mean runtime\nPlanT %+.0f s\nMinT %+.0f s\n"%(rtsup,rtsup+rtmarg), xy=(arrx0*0.45,-disty*vpos) )
     
-fig, axi = plt.subplots(figsize=(12, 8))
-axi.annotate("departing", xy=(0,-disty*0.15) )
-axi.annotate("arriving", xy=(arrx0,-disty*0.15) )
-axi.set_ylim(top=0,bottom=-7*disty)
-axi.set_xlim(left=-arrx0/2,right=arrx0+2*plimill)
-maxyfigval=0
-addochoi(axi,"5.1.1","be on-time",1,0,30,1,0,30,0 )    
-addochoi(axi,"5.1.2","aim punctual",2,0,30,1,plimill/2,plimill/3,0 ) 
-addochoi(axi,"5.1.3","on-timish",3,0,30,1,plimill/6,plimill/3,0 )
-addochoi(axi,"5.2.1","wait connect",4,rtmarg,rtmarg/1.5,0,0,plimill/2,0 )
-addochoi(axi,"5.2.2","try get ahead",5,0,30,1,-rtmarg,plimill/6,1 )
-addochoi(axi,"5.3.1","coastalot",6,0,30,1,plimill,plimill,0 ,showlim=0)
+def addcholabs(ax):
+    ax.annotate("departing", xy=(0,-disty*0.15) )
+    ax.annotate("arriving", xy=(arrx0,-disty*0.15) )
+    ax.set_ylim(top=0,bottom=-7*disty)
+    ax.set_xlim(left=-arrx0/2,right=arrx0+2*plimill)
+    ylpos=-disty*6.5
+    ax.annotate("planned\ndeparture", xy=(0,ylpos) )
+    ax.annotate("planned\narrival", xy=(arrx0,ylpos) )
+    ax.annotate("p.limit\nill=%0.f"%(plimill), xy=(arrx0+plimill,ylpos) )
+    ax.set_axis_off()
 
-ylpos=-disty*6.5
-axi.annotate("planned\ndeparture", xy=(0,ylpos) )
-axi.annotate("planned\narrival", xy=(arrx0,ylpos) )
-axi.annotate("p.limit\nill=%0.f"%(plimill), xy=(arrx0+plimill,ylpos) )
-axi.set_axis_off()
-fig.show()
+fig, axi = plt.subplots(figsize=(12, 8))
+maxyfigval=0
+addochoi(axi,"C1","coastalot",1,0,30,1,plimill,plimill,0 ,showlim=0)
+addochoi(axi,"E1","aim punctual",2,0,30,1,plimill/2,plimill/3,0 ) 
+addochoi(axi,"E2","on-timish",3,0,30,1,plimill/6,plimill/3,0 )
+addochoi(axi,"E3","be on-time",4,0,30,1,0,30,0 )    
+addochoi(axi,"R1","wait connect",5,rtmarg,rtmarg/1.5,0,0,plimill/2,0 )
+addochoi(axi,"R2","try get ahead",6,0,30,1,-rtmarg,plimill/6,1 )
+addcholabs(axi)
+
 figname = "../output/opchill.svg"
 fig.savefig(figname, bbox_inches='tight',dpi=600)
+# +
+fig, axi = plt.subplots(figsize=(12, 8))
+maxyfigval=0
+addochoi(axi,"R1","< 2010: wait connect",2,rtmarg,rtmarg/1.5,0,0,plimill/2,0 )
+addochoi(axi,"",  "2011: ECO driving",3,rtmarg,rtmarg/1.5,0,plimill/2,plimill/3,0 ) 
+addochoi(axi,"E2 (approx))","2014: depart proc",4,0,30,1,plimill/6,plimill/3,0 )
+addochoi(axi,"E3","2017: OTH/OTR",5,0,30,1,0,30,0 )    
+addcholabs(axi)
+
+figname = "../output/opcnsst.svg"
+fig.savefig(figname, bbox_inches='tight',dpi=600)
 # -
+
+
+
 
 
