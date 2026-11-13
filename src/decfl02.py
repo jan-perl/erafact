@@ -63,16 +63,45 @@ import schemdraw.elements as elm
 #schemdraw.svgconfig.svg2 = False
 
 # +
-txtqprio ="4.5 b\n Prio train type or\nno conflict ?"
-txtqebenf='4.2 (with flow), 6.2\nBenefits from\nenergy saving ?'
+some_string="""Qcode,Question,Y,N
+QD,Dispatching Rule,OTP,TTP
+QF,Fuel Type,Electric,Diesel
+QG,Guessed Timetable,Y,N
+QI,Incumbent Passenger Operator,Y,N
+QL,Low Priority with possible conflict,Y,N
+QM,Metering possible,Y,N
+QP,From Flow Profit from Energy Saving,Y,N
+QT,Timetable for train,Y,N
+QV,Virtual Meter Cheaper,Y,N
+"""
+qdf= pd.read_csv(io.StringIO(some_string), sep=",")
+#qdf['Q2'] = qdf['Qcode']+'\n'+qdf['Question']+"?"
+qdf['Q2'] = qdf['Question']+" ?"
+#for idx, row in qdf.iterrows():
+#    row['Q2'] = row['Q2'].replace("\\\\n","\n")
+#    decode('string-escape')
+#qdf['Q2'] = qdf['Q2'].str.decode('unicode-escape')
+#qdf['Q2'] = qdf['Q2'].str.replace('a','\n'.encode('unicode-escape'))
+qqs=qdf.set_index("Qcode")[['Q2']].to_dict()['Q2']
+qqs
+
+
+# -
+
+qdf
+
+# +
+txtqprio ="QL\nLow Prio train with\npossible conflict ?"
+txtqebenf='QP (see flow)\nBenefits from\nenergy saving ?'
 dwi=7
+swi=4
 
 def addpartnott(d,d1,d2m,fast,ttpo,bslo,coastin,sep): 
     d += flow.Arrow().right(d.unit*0.5).at(d1.E)
     nttd = flow.Box(w=5, h=3).anchor('W').label('Many countries:\n freight \nshunting').drop('E')
     d += nttd
     d += flow.Arrow().right(d.unit*0.5)
-    dgt = flow.Decision(w=dwi, h=3.9, S='YES', E='NO').anchor('W').label('4.1.1\nCan Guess\na Timetable ?').drop('E')
+    dgt = flow.Decision(w=dwi, h=3.9, S='YES', E='NO').anchor('W').label('QG\nGuessed\nTimetable\nPossible ?').drop('E')
     d += dgt
     d += flow.Arrow().right(d.unit*2.0)
 #    d += flow.Arrow().tox(fast.E)
@@ -83,12 +112,12 @@ def addpartnott(d,d1,d2m,fast,ttpo,bslo,coastin,sep):
     d += flow.Arrow().toy(d2m.N)
     d2 = flow.Decision(w=dwi, h=3.9, S='YES', W='NO').anchor('N').label(txtqebenf).drop('S')
     d += d2
-    d += flow.Arrow().toy(bslo.N)
-    bot = flow.Box(w=5, h=3).label('5.3.1\nrun slowly\naim  40 km/h\nend speed')
-    d += bot
+#    d += flow.Arrow().toy(bslo.N)
+#    bot = flow.Box(w=5, h=3).label('5.3.1\nrun slowly\naim  40 km/h\nend speed')
+#    d += bot
     d += flow.Arrow().toy(sep.N)
 #    d += flow.Arrow().to(coastal.N)
-    coastal= flow.Start().label('Coast\na lot')
+    coastal= flow.Start(w=swi,h=2).label('C1\nCoastalot')
     d += coastal
     
     d += flow.Arrow().at(dgt.S).down(d.unit*0.5)
@@ -111,21 +140,21 @@ def addpartnosav(d,d1,sep):
     d += flow.Arrow().right(d.unit*2.0).at(d1.E)
 #    nttd = flow.Box(w=2, h=1).anchor('W').label('Some countries\n freight \nshunting').drop('E')
 #    d += nttd    
-    d3 = flow.Decision(w=dwi, h=3.9, S='YES', E='NO').anchor('W').label(txtqprio).drop('S')
+    d3 = flow.Decision(w=dwi, h=3.9, E='YES', S='NO').anchor('W').label(txtqprio).drop('S')
     d += d3
 
     d += flow.Arrow().down(d.unit*1.5).at(d3.S)
-    d += flow.Box(w=5, h=3).anchor('N').label('5.2.1\nawait connections\nrun quickly').drop('S')
+#    d += flow.Box(w=5, h=3).anchor('N').label('5.2.1\nawait connections\nrun quickly').drop('S')
     d += flow.Arrow().toy(sep.N)
-    d += flow.Start().label('Wait and\nMake up')
+    d += flow.Start(w=swi,h=2).label('R1\nwait connect')
 
 #    d += flow.Arrow().at(d3.E).to(fast.W)
 
     d += flow.Arrow().at(d3.E).right(d.unit*0.5)
-    fast = flow.Box(w=5, h=3).anchor('W').label('5.2.2\nget ahead\nof others').drop('S')
+    fast = flow.Box(w=5, h=3).anchor('W').label('run as early\nas possible').drop('S')
     d += fast
     d += flow.Arrow().toy(sep.N)
-    d += flow.Start().label('Full\nspeed')
+    d += flow.Start(w=swi,h=2).label('R2\nearliest')
 
     return (fast)
 # -
@@ -140,30 +169,30 @@ def addpart1(d):
     b = flow.Start().label('START')
     d += b 
     d += flow.Arrow().down(d.unit/2)
-    d1 = flow.Decision(w=dwi, h=3.9, S='YES', E='NO').label('4.1, 6.1\nMinute-level\ntimetable ?')
+    d1 = flow.Decision(w=dwi, h=3.9, S='YES', E='NO').label('QT\nMinute-level\ntimetable ?')
     d += d1
     d += flow.Arrow().length(d.unit/2)
-    d3 = flow.Decision(w=dwi, h=3.9, W='OTP', S='TTP').label('4.5 a\nDispatching\nStrategy')
+    d3 = flow.Decision(w=dwi, h=3.9, W='OTP', S='TTP').label('QD\nDispatching\nStrategy')
     d += d3
     d += flow.Arrow().length(d.unit/2)
     d2 = flow.Decision(w=dwi, h=3.9, S='YES', E='NO').label(txtqebenf)    
     d += d2
     d += flow.Arrow().length(d.unit/2)
-    dpr = flow.Decision(w=dwi, h=3.9, E='YES', S='NO').label(txtqprio )
+    dpr = flow.Decision(w=dwi, h=3.9, S='YES', E='NO').label(txtqprio )
     d += dpr
     d += flow.Arrow().length(d.unit/2)
-    bot = flow.Box(w=5, h=3).label('5.1.3\nrun on time-ish\naim + 1 min')
-    d += bot
+#    bot = flow.Box(w=5, h=3).label('5.1.3\nrun on time-ish\naim + 1 min')
+#    d += bot
     d += flow.Arrow().down(d.unit/2)
     
-    sep= flow.Start().label('ECO\ndrive')    
+    sep= flow.Start(w=swi,h=2).label('E2\non-timeish')    
     d += sep
     
     d += flow.Arrow().left(d.unit/2).at(d3.W)
-    bot = flow.Box(w=5, h=3).label('5.1.1\nbe on-time\n< +/-30 secs.').drop('S')
-    d += bot
+#    bot = flow.Box(w=5, h=3).label('5.1.1\nbe on-time\n< +/-30 secs.').drop('S')
+#    d += bot
     d += flow.Arrow().toy(sep.N)
-    d+= flow.Start().label('ECO\ndrive')
+    d+=  flow.Start(w=swi,h=2).label('E3\non-time')    
 
     (fast) = addpartnosav(d,d2,sep) 
     
@@ -171,10 +200,10 @@ def addpart1(d):
 #    d += flow.Line().at(dpr.E).tox(fast.E)
 #    d += flow.Arrow().right(d.unit/2)
     bslo = flow.Box(w=5, h=3).label('5.1.2\naim half\npunct. min').drop('S')
-    d += bslo
+#    d += bslo
     d += flow.Arrow().toy(sep.N)
 #    d += flow.Arrow().to(coastal.N)
-    coastal= flow.Start().label('ECO\ndrive')
+    coastal= flow.Start(w=swi,h=2).label('E1\njust punctual')    
     d += coastal    
 #    d += flow.Arrow().right(d.unit*1)
 #    coastal=flow.StateEnd().label('Coast\na lot')
@@ -198,26 +227,26 @@ def addebenf1(d):
     b = flow.Start().label('START')
     d += b 
     d += flow.Arrow().down(d.unit/2)
-    d1 = flow.Decision(w=8, h=5, S='Electric', E='Diesel').label('Traction type')
+    d1 = flow.Decision(w=8, h=5, S='Electric', E='Diesel').label('QF\nTraction type')
     d += d1
     d += flow.Arrow().length(d.unit/2)
-    d3 = flow.Decision(w=8, h=5, E='> 55 %', S='< 55 %').label('operator > 55 %\nof E-Energy\nin network')
+    d3 = flow.Decision(w=8, h=5, E='YES', S='NO').label('QI\nIncumbent\nPassenger\nOperator ?')
     d += d3
     d += flow.Arrow().length(d.unit/2)
-    d2 = flow.Decision(w=8, h=5, E='YES', S='NO').label("Have meter ?").drop('E')
+    d2 = flow.Decision(w=8, h=5, E='YES', S='NO').label("QM\nHave meter ?").drop('E')
     d += d2
     
     d += flow.Arrow().length(d.unit/2)
-    dvch = flow.Decision(w=8, h=5, E='NO', S='YES').label("Virtual meter\ncheaper ?" ).drop('S')
+    dvch = flow.Decision(w=8, h=5, E='NO', S='YES').label("QV\nVirtual meter\ncheaper ?" ).drop('S')
     d += dvch
     d += flow.Arrow().down(d.unit/2)
     d += flow.Box(w=8, h=2).label("Avoid\nusing meter").drop('S')
     d += flow.Arrow().down(d.unit/2)
-    sep= flow.Start(w=8,h=2).label(mnok+' No profits\nby ECO-driving')    
+    sep= flow.Start(w=8,h=2).label(mnok+'QP: No profits\nby ECO-driving')    
     d += sep
 
     d += flow.Arrow().at(d3.E).right(d.unit*2.5)
-    benf= flow.Start(w=8,h=2).anchor('W').label(mok+' Profits\nby ECO-driving')
+    benf= flow.Start(w=8,h=2).anchor('W').label(mok+'QP: Profits\nby ECO-driving')
     d += benf
     d += flow.Wire("-|", arrow='->').at(dvch.E).to(benf.S)
 #    d += flow.Arrow().at(d1.E).to(benf.N)

@@ -95,13 +95,13 @@ fig.show()
 
 # +
 rtmarg=60
-def addochoi(ax,nr,label, vpos, dep0, depwi,depind,arr0, arrwi,arrind,showlim=1):
+def addochoi(ax,nr,label, vpos, dep0, depwi,depind,arr0, arrwi,rtmargc,arrind,showlim=1):
     drawdis(axi,dep0,depwi,arrx0*0,-disty*vpos,0,depind)
     drawdis(axi,arr0,arrwi,arrx0*1,-disty*vpos,plimill*showlim,arrind)
     axi.annotate(nr+"\n", xy=(-arrx0*0.45,-disty*vpos) )
     axi.annotate(label+"\n", xy=(-arrx0*0.35,-disty*vpos) )
     rtsup= arr0-dep0 - (2*depwi * depind /3) + (2*arrwi * arrind /3)       
-    axi.annotate("Mean runtime\nPlanT %+.0f s\nMinT %+.0f s\n"%(rtsup,rtsup+rtmarg), xy=(arrx0*0.45,-disty*vpos) )
+    axi.annotate("Mean runtime\nPlanT %+.0f s\nMinT %+.0f s\n"%(rtsup,rtsup+rtmargc), xy=(arrx0*0.45,-disty*vpos) )
     
 def addcholabs(ax):
     ax.annotate("departing", xy=(0,-disty*0.15) )
@@ -114,14 +114,15 @@ def addcholabs(ax):
     ax.annotate("p.limit\nill=%0.f"%(plimill), xy=(arrx0+plimill,ylpos) )
     ax.set_axis_off()
 
+rtmargi=rtmarg    
 fig, axi = plt.subplots(figsize=(12, 8))
 maxyfigval=0
-addochoi(axi,"C1","coastalot",1,0,30,1,plimill,plimill,0 ,showlim=0)
-addochoi(axi,"E1","aim punctual",2,0,30,1,plimill/2,plimill/3,0 ) 
-addochoi(axi,"E2","on-timish",3,0,30,1,plimill/6,plimill/3,0 )
-addochoi(axi,"E3","be on-time",4,0,30,1,0,30,0 )    
-addochoi(axi,"R1","wait connect",5,rtmarg,rtmarg/1.5,0,0,plimill/2,0 )
-addochoi(axi,"R2","try get ahead",6,0,30,1,-rtmarg,plimill/6,1 )
+addochoi(axi,"C1","coastalot",6,0,30,1,plimill,plimill,rtmargi,0 ,showlim=0)
+addochoi(axi,"E1","just punctual",5,0,30,1,plimill/2,plimill/3,rtmargi,0 ) 
+addochoi(axi,"E2","on-timish",4,0,30,1,plimill/6,plimill/3,rtmargi,0 )
+addochoi(axi,"E3","on-time",3,0,30,1,0,30,rtmargi,0 )    
+addochoi(axi,"R1","wait connect",2,rtmarg,rtmarg/1.5,0,0,plimill/2,rtmargi,0 )
+addochoi(axi,"R2","earliest",1,0,30,1,-rtmarg,plimill/6,rtmargi,1 )
 addcholabs(axi)
 
 figname = "../output/opchill.svg"
@@ -138,6 +139,10 @@ addcholabs(axi)
 figname = "../output/opcnsst.svg"
 fig.savefig(figname, bbox_inches='tight',dpi=600)
 # -
+
+
+
+
 
 
 
